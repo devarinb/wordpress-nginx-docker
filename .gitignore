@@ -1,0 +1,115 @@
+# Docker and development files
+.env
+.env.local
+.env.*.local
+!.env.example
+docker-compose.override.yml
+
+# Docker volumes and data
+mariadb_data/
+wordpress_data/
+redis_data/
+*.tar.gz
+*.tar
+
+# Log files
+*.log
+logs/
+nginx/logs/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# WordPress core files (should be managed by Docker)
+wp-admin/
+wp-includes/
+wp-content/plugins/
+wp-content/themes/
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/index.php
+wp-content/blogs.dir/
+wp-content/cache/
+wp-content/advanced-cache.php
+wp-content/wp-cache-config.php
+
+# WordPress specific
+wp-config-sample.php
+wp-config-local.php
+wp-config.php.bak
+wp-config.php.old
+wp-config.php.save
+wp-config.php.orig
+wp-config.php~
+
+# Database backups
+*.sql
+*.sql.gz
+backup/
+backups/
+
+# SSL certificates (should be managed externally)
+nginx/ssl/*
+!nginx/ssl/.gitkeep
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Package manager files
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Composer
+vendor/
+composer.lock
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Build artifacts
+dist/
+build/
+public/build/
+
+# WordPress debug files
+debug.log
+wp-debug.log
+
+# WordPress core updates
+wp-content/upgrade-temp-backup/
+
+# WordPress multisite
+wp-content/blogs.dir/
+wp-content/sunrise.php
+
+# WordPress object cache
+wp-content/object-cache.php
+
+# WordPress maintenance mode
+.maintenance
+
+# WordPress auto-generated files
+wp-content/wp-rocket-config/
+wp-content/w3tc-config/
+wp-content/ai1wm-backups/
