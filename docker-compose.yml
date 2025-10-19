@@ -1,6 +1,5 @@
 # Coolify-optimized WordPress Docker Compose
 # This version removes port mappings and uses Coolify's environment variables
-
 services:
   # MariaDB Database
   mariadb:
@@ -15,8 +14,7 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
       - ./mariadb/conf.d:/etc/mysql/conf.d
-    networks:
-      - ${NETWORK_NAME}
+
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
   # WordPress with PHP 8.4
@@ -33,8 +31,8 @@ services:
         define('WP_REDIS_HOST', '${CONTAINER_NAME_PREFIX}redis');
         define('WP_REDIS_PORT', 6379);
         define('WP_REDIS_DATABASE', 0);
-        define('WP_HOME', '${APPLICATION_URL}');
-        define('WP_SITEURL', '${APPLICATION_URL}');
+        define('WP_HOME', 'https://${SERVICE_FQDN}');
+        define('WP_SITEURL', 'https://${SERVICE_FQDN}');
     volumes:
       - wordpress_data:/var/www/html
       - ./wordpress/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
@@ -42,23 +40,18 @@ services:
     depends_on:
       - mariadb
       - redis
-    networks:
-      - ${NETWORK_NAME}
 
   # Nginx Web Server
   nginx:
     image: nginx:1.28.0-alpine
     container_name: ${CONTAINER_NAME_PREFIX}nginx
     restart: unless-stopped
-    # Ports are handled by Coolify automatically
     volumes:
       - wordpress_data:/var/www/html
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/ssl:/etc/nginx/ssl
     depends_on:
       - wordpress
-    networks:
-      - ${NETWORK_NAME}
 
   # Redis for caching
   redis:
@@ -68,14 +61,8 @@ services:
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
-    networks:
-      - ${NETWORK_NAME}
 
 volumes:
   mariadb_data:
   wordpress_data:
   redis_data:
-
-networks:
-  default:
-    driver: bridge
