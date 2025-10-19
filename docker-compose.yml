@@ -1,8 +1,11 @@
+# Coolify-optimized WordPress Docker Compose
+# This version removes port mappings and uses Coolify's environment variables
+
 services:
   # MariaDB Database
   mariadb:
     image: mariadb:12.0.2
-    container_name: wordpress_mariadb
+    container_name: ${CONTAINER_NAME_PREFIX}mariadb
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -13,23 +16,25 @@ services:
       - mariadb_data:/var/lib/mysql
       - ./mariadb/conf.d:/etc/mysql/conf.d
     networks:
-      - wordpress_network
+      - ${NETWORK_NAME}
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
   # WordPress with PHP 8.4
   wordpress:
     image: wordpress:6.8.3-php8.4-fpm-alpine
-    container_name: wordpress_app
+    container_name: ${CONTAINER_NAME_PREFIX}wordpress
     restart: unless-stopped
     environment:
-      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_HOST: ${CONTAINER_NAME_PREFIX}mariadb:3306
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
       WORDPRESS_DB_USER: ${MYSQL_USER}
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
       WORDPRESS_CONFIG_EXTRA: |
-        define('WP_REDIS_HOST', 'redis');
+        define('WP_REDIS_HOST', '${CONTAINER_NAME_PREFIX}redis');
         define('WP_REDIS_PORT', 6379);
         define('WP_REDIS_DATABASE', 0);
+        define('WP_HOME', '${APPLICATION_URL}');
+        define('WP_SITEURL', '${APPLICATION_URL}');
     volumes:
       - wordpress_data:/var/www/html
       - ./wordpress/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
@@ -38,16 +43,14 @@ services:
       - mariadb
       - redis
     networks:
-      - wordpress_network
+      - ${NETWORK_NAME}
 
   # Nginx Web Server
   nginx:
     image: nginx:1.28.0-alpine
-    container_name: wordpress_nginx
+    container_name: ${CONTAINER_NAME_PREFIX}nginx
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
+    # Ports are handled by Coolify automatically
     volumes:
       - wordpress_data:/var/www/html
       - ./nginx/conf.d:/etc/nginx/conf.d
@@ -55,18 +58,18 @@ services:
     depends_on:
       - wordpress
     networks:
-      - wordpress_network
+      - ${NETWORK_NAME}
 
   # Redis for caching
   redis:
     image: redis:7.2-alpine
-    container_name: wordpress_redis
+    container_name: ${CONTAINER_NAME_PREFIX}redis
     restart: unless-stopped
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
     networks:
-      - wordpress_network
+      - ${NETWORK_NAME}
 
 volumes:
   mariadb_data:
@@ -74,5 +77,5 @@ volumes:
   redis_data:
 
 networks:
-  wordpress_network:
+  ${NETWORK_NAME}:
     driver: bridge
