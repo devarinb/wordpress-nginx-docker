@@ -1,5 +1,5 @@
 upstream wordpress {
-    server wordpress:9000;
+    server ${CONTAINER_NAME_PREFIX}wordpress:9000;
 }
 
 server {
