@@ -50,7 +50,7 @@ This guide explains how to deploy this WordPress setup on Coolify, a self-hosted
 ### File Changes Made
 
 - **`docker-compose.coolify.yml`**: Coolify-optimized version without port mappings
-- **`nginx/conf.d/default.conf.template`**: Updated to use `${DOMAIN_NAME}` and `${CONTAINER_NAME_PREFIX}` variables for Coolify templating
+- **`nginx/conf.d/default.conf`**: Updated for Coolify with server*name * (catches all) and upstream wordpress:9000
 
 ## 📊 Monitoring and Logs
 
