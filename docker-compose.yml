@@ -23,12 +23,12 @@ services:
     container_name: ${CONTAINER_NAME_PREFIX}wordpress
     restart: unless-stopped
     environment:
-      WORDPRESS_DB_HOST: ${CONTAINER_NAME_PREFIX}mariadb:3306
+      WORDPRESS_DB_HOST: mariadb:3306
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
       WORDPRESS_DB_USER: ${MYSQL_USER}
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
       WORDPRESS_CONFIG_EXTRA: |
-        define('WP_REDIS_HOST', '${CONTAINER_NAME_PREFIX}redis');
+        define('WP_REDIS_HOST', 'redis');
         define('WP_REDIS_PORT', 6379);
         define('WP_REDIS_DATABASE', 0);
         define('WP_HOME', 'https://${SERVICE_FQDN}');
